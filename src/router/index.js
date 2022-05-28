@@ -7,7 +7,7 @@ const Practice = () => import('@/pages/Practice.vue')
 const routes = [
   {
     path:'/',
-    redirect:'/practice'
+    redirect:'/index'
   },
   {
     path:'/index',

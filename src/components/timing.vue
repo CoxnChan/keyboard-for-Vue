@@ -5,7 +5,7 @@
               打字速度:
           </div>
           <div class="error">
-              错字数:
+              错字数:0
           </div>
       </div>
       <div class="time">
@@ -27,12 +27,13 @@
 
 <script>
 import { ref,onMounted } from "vue";
+import router from '../router'
 export default {
     name:"_Timing",
     props:{
         choiceTime:{
             type:Number,
-            default:120
+            default:0
         }
     },
     setup(props) {
@@ -45,50 +46,70 @@ export default {
         const Shour = ref("00")
 
         let setTime = {}
+        let ifStart = 0
+        
+        // 开始打字时就开始倒计时
+        document.onkeydown = (e) =>{
+            console.log(e.keyCode)
+            if(ifStart == 0) if((e.keyCode>=65&&e.keyCode<=90)||e.keyCode==229) start()
+            
+        }
+        // 算出整体时间
         const timing = () =>{
             minute.value = parseInt(props.choiceTime/60%60)
             second.value = parseInt(props.choiceTime%60)
             hour.value = parseInt(props.choiceTime/60/60)
             Stiming()
         }
-
+        // 打印时间
         const Stiming = () =>{
             String(hour.value).length == 1? Shour.value = '0'+ hour.value:Shour.value = hour.value
             String(minute.value).length == 1? Sminute.value = '0'+ minute.value:Sminute.value = minute.value
             String(second.value).length == 1? Ssecond.value = '0'+ second.value:Ssecond.value = second.value
         }
 
+        // 开始
         const start = () =>{
-            setTime = setInterval(() => {
-                if(second.value==0){
-                    if(minute.value==0){
-                        if(hour.value==0){
-                            theEnd()
+            if(ifStart == 0){
+                setTime = setInterval(() => {
+                    if(second.value==0){
+                        if(minute.value==0){
+                            if(hour.value==0){
+                                theEnd()
+                            }else{
+                                hour.value -= 1
+                                minute.value == 59
+                                second.value == 59
+                            }
                         }else{
-                            hour.value -= 1
-                            minute.value == 59
-                            second.value == 59
+                            minute.value -= 1
+                            second.value = 59
                         }
                     }else{
-                        minute.value -= 1
-                        second.value = 59
+                        second.value -= 1
                     }
-                }else{
-                    second.value -= 1
-                }
-                Stiming()
-            }, 1000);
+                    Stiming()
+                }, 1000);
+                ifStart = 1
+            }
         }
+        // 暂停
         const pause = () =>{
             clearInterval(setTime)
+            ifStart = 0
         }
+        // 结束
         const theEnd = () =>{
-            
+            pause()
+
+            alert("游戏结束")
+            router.push({
+                path:"/index"
+            })
         }
         
         onMounted(() => {
           timing()
-          console.log(props.choiceTime)
         })
         return{
             props,

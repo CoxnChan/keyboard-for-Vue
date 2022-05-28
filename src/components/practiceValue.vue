@@ -4,8 +4,8 @@
           <div class="valueItem diy-box-shadow diy-background-colorW" v-for="(item,index) in valueList" :key="index">
               <div class="value">
                   <div class="word" v-for="(word,i) in item" :key="i"
-                    :class="(inputValue[index][i] == word?'diy-text-colorH':
-                    (typeof(inputValue[index][i]) == 'undefined'?'wordB':'diy-text-colorR'))">
+                    :class="(inputValue[index][i] == word? successWord():
+                    (typeof(inputValue[index][i]) == 'undefined'?'':ErrorWord()))">
                       {{word}}
                   </div>
               </div>
@@ -43,15 +43,20 @@ export default {
                 end += length
             }
         }
-
-
+        const ErrorWord = () => {
+           return 'diy-text-colorR'
+        }
+        const successWord = () => {
+            return 'diy-text-colorH'
+        }
         onMounted(() => {
             sortList()
         })
         return{
             props,
             inputValue,
-            valueList
+            valueList,
+            ErrorWord,successWord
         }
     }
 }
